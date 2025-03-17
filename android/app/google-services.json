@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "332964832866",
+    "project_id": "cobalto-3697f",
+    "storage_bucket": "cobalto-3697f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332964832866:android:9e06fe684e7e5b88a9533b",
+        "android_client_info": {
+          "package_name": "com.example.apk_register"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBf-oqR4MrYwn2e3TR46F8MQso832BegQA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
