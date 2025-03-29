@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "58964083565",
+    "project_id": "cobalto-42adf",
+    "storage_bucket": "cobalto-42adf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58964083565:android:23a9c596c8799a78715064",
+        "android_client_info": {
+          "package_name": "Cobalto.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcdpcNtKllFI1pncQh4FMGADdMB_JR2oY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58964083565:android:75e66313b9e4b09c715064",
+        "android_client_info": {
+          "package_name": "com.example.prueva"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBcdpcNtKllFI1pncQh4FMGADdMB_JR2oY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
