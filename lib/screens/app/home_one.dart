@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prueva/firebase/auth_services.dart';
+import 'package:prueva/firebase/read_data.dart';
+import 'package:prueva/screens/app/agua/agua_caudal.dart';
+import 'package:prueva/screens/app/agua/agua_consumo.dart';
+import 'package:prueva/screens/app/users/users_list.dart';
 import 'package:prueva/screens/app/users/users_register.dart';
 // import 'package:prueva/firebase/auth_services.dart';
 final selectedIndex = StateProvider<int>( (ref) => 0);
@@ -17,13 +21,28 @@ class HomeOne extends ConsumerWidget {
     List<Widget> pages = [
       const Center(child: Text('page 1')),
       UsersRegister(),
-      const Center(child: Text('page 2')),
+      UsersList(),
+      AguaConsumo(),
+      AguaCaudal(),
     ];
 
     void onDrawerItem(int index) {
       ref.read(selectedIndex.notifier).state = index; // Actualiza el índice seleccionado
       Navigator.pop(context); // Cierra el drawer después de seleccionar un ítem
     }
+
+    // void onLogout () async{
+    //   try {
+    //     await ref.read(authProvider.notifier).logout();
+    //   } catch (e) {
+    //     return;        
+    //   }
+    //   if(!context.mounted) return;
+    //    Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+    //     MaterialPageRoute(builder: (context) => const LoginScreens()),
+    //     (route) => false,
+    //   );
+    // }
 
     return Scaffold(
       key: _scaffoldKey, // Asignamos el GlobalKey al Scaffold
@@ -50,14 +69,16 @@ class HomeOne extends ConsumerWidget {
             icon: const Icon(Icons.logout),
             color: Colors.white,
             onPressed: () {
+              //  onLogout();
               // ref.read(authProvider.notifier).signOut();
             },
           ),
+
         ],
       ),
       drawer: SizedBox(
         width: 200,
-        child: MyDrawer(onDrawerItem: onDrawerItem))
+        child: MyDrawer(onDrawerItem: onDrawerItem, ref:ref))
         ,
       body: pages[selectedIndexMenu], // Mostrar la página según la selección
     );
@@ -66,8 +87,13 @@ class HomeOne extends ConsumerWidget {
 
 class MyDrawer extends StatelessWidget {
   final Function(int) onDrawerItem;
+  final WidgetRef ref;
 
-  const MyDrawer({super.key, required this.onDrawerItem});
+  const MyDrawer({super.key, required this.onDrawerItem, required this.ref});
+
+  void onPress (){
+    ref.read(readDataProvider)['users'];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,24 +123,31 @@ class MyDrawer extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.list),
                 title: const Text('Ver'),
-                onTap: () => onDrawerItem(2),
-              ),
-              
+                onTap: (){
+                  onDrawerItem(2);
+                  onPress();
+                } 
+              ),       
             ],
           ),
           ExpansionTile(
-            leading: const Icon(Icons.business),
+            leading: const Icon(Icons.water),
             title: const Text('Agua'),
             children: [
               ListTile(
-                leading: const Icon(Icons.list),
+                leading: Icon(Icons.water_damage_outlined, color: Colors.blue[500],),
                 title: const Text('Consumo'),
-                onTap: () => onDrawerItem(0),
+                onTap: () => onDrawerItem(3),
               ),
               ListTile(
-                leading: Icon(Icons.add),
+                leading: Icon(Icons.water_drop_outlined, color: Colors.blue[500],),
                 title: const Text('Riego'),
-                onTap: () => onDrawerItem(1),
+                onTap: () => onDrawerItem(4),
+              ),
+              ListTile(
+                leading: Icon(Icons.mediation_sharp ),
+                title: const Text('Caudal'),
+                onTap: () => onDrawerItem(5),
               ),
             ],
           ),

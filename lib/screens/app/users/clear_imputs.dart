@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 
 class FormUtils {
-  static void clearFormRegister({
+   static void clearFormRegister({
     required TextEditingController nameController,
     required TextEditingController apellidoControler,
     required TextEditingController edadControler,

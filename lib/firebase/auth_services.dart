@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ValueNotifier<AuthServices> authService = ValueNotifier(AuthServices());
@@ -59,19 +58,19 @@ class AuthServices extends StateNotifier<User?> {
   Future<void> signIn({required String email, required String password}) async {
     try {
       final String emailLowercase = email.toLowerCase().trim();
-      final QuerySnapshot result = await _fireStore
-        .collection('users')
-        .where('email', isEqualTo: emailLowercase)
-        .limit(1)
-        .get();
+      // final QuerySnapshot result = await _fireStore
+      //   .collection('users')
+      //   .where('email', isEqualTo: emailLowercase)
+      //   .limit(1)
+      //   .get();
 
-        if(result.docs.isNotEmpty){
-          final String email = result.docs.first.get('email');
+        // if(result.docs.isNotEmpty){
+          // final String email = result.docs.first.get('email');
           final UserCredential credential = await _auth.signInWithEmailAndPassword(
-            email: email,
+            email: emailLowercase,
             password: password
           );
-        }
+        // }
         return;
     } catch (e) {
       throw Exception('Error al logearsw');
@@ -82,7 +81,6 @@ class AuthServices extends StateNotifier<User?> {
   Future<void> logout () async {
     try{
       await _auth.signOut();
-      state = null;
     }catch(e){
       throw Exception('Error al cerrar sesion');
     }

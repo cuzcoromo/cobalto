@@ -6,7 +6,6 @@ void showFloatingError( BuildContext context, String message, {Color color = Col
   final overlayEntry = OverlayEntry(
     builder: (context) => Positioned(
       top: 80,
-      // left: 20,
       right: 10,
       child: Material(
         color: Colors.transparent,
