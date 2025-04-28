@@ -4,6 +4,7 @@ import 'package:prueva/firebase/auth_services.dart';
 import 'package:prueva/firebase/read_data.dart';
 import 'package:prueva/screens/app/agua/agua_caudal.dart';
 import 'package:prueva/screens/app/agua/agua_consumo.dart';
+import 'package:prueva/screens/app/agua/rubros_config.dart';
 import 'package:prueva/screens/app/users/users_list.dart';
 import 'package:prueva/screens/app/users/users_register.dart';
 // import 'package:prueva/firebase/auth_services.dart';
@@ -24,6 +25,7 @@ class HomeOne extends ConsumerWidget {
       UsersList(),
       AguaConsumo(),
       AguaCaudal(),
+      RubrosConfig(),
     ];
 
     void onDrawerItem(int index) {
@@ -145,8 +147,8 @@ class MyDrawer extends StatelessWidget {
                 onTap: () => onDrawerItem(4),
               ),
               ListTile(
-                leading: Icon(Icons.mediation_sharp ),
-                title: const Text('Caudal'),
+                leading: Icon(Icons.monetization_on_outlined ),
+                title: const Text('Cobros'),
                 onTap: () => onDrawerItem(5),
               ),
             ],

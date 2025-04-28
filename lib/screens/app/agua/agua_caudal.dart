@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prueva/screens/app/agua/components/list_riego.dart';
+import 'package:prueva/screens/app/agua/components/price_riego.dart';
+import 'package:prueva/screens/app/agua/components/register_riego.dart';
 import 'package:prueva/theme_colors.dart';
 
 class AguaCaudal extends ConsumerStatefulWidget {
@@ -16,6 +19,16 @@ class _AguaCaudalState extends ConsumerState<AguaCaudal> {
   // Controladores para el manejo de los campos de texto
   final TextEditingController _caudalController = TextEditingController();
   final TextEditingController _unidadController = TextEditingController();
+  final TextEditingController _direccionControler = TextEditingController();
+
+  int currentPageIndex = 0;
+
+  @override
+  void initState() {
+    // Inicialización de los controladores si es necesario
+    _direccionControler.text = 'Cobalto';
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -40,91 +53,42 @@ class _AguaCaudalState extends ConsumerState<AguaCaudal> {
   @override
   Widget build(BuildContext context) {
     // Acceso al tema actual para usar sus colores y estilos
-    final theme = Theme.of(context);
+    ThemeData localTheme = Theme.of(context);
 
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                // Título del formulario
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Text(
-                    'Registro de caudal',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.background1,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Campo para ingresar el caudal
-                TextFormField(
-                  controller: _caudalController,
-                  decoration: InputDecoration(
-                    hintText: 'Caudal',
-                    hintStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.background1,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.background2,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty)
-                      'Por favor ingresa el caudal';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                // Campo para ingresar la unidad de medida
-                TextFormField(
-                  controller: _unidadController,
-                  decoration: InputDecoration(
-                    hintText: 'Unidad de medida',
-                    hintStyle: TextStyle(
-                      color: Theme.of(context).colorScheme.background1,
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context).colorScheme.background2,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Por favor ingresa la unidad de medida';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 24),
-                // Botón para enviar el formulario
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(
-                      Theme.of(context).colorScheme.background1,
-                    ),
-                  ),
-                  child: Text('Registrar',style: TextStyle(color: Colors.white),
-                ),
-                ),
-              ],
-            ),
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentPageIndex = index;
+          });
+        },
+        height: 50,
+        indicatorColor: localTheme.colorScheme.background2,
+        selectedIndex: currentPageIndex,
+        destinations: const <Widget>[
+          NavigationDestination(
+            icon: Icon(Icons.price_change),
+            // selectedIcon: Icon(Icons.price_change),
+            label: 'Precios',
           ),
-        ),
+          NavigationDestination(
+            icon: Icon(Icons.water_drop),
+            label: 'Registro',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.list),
+            label: 'Lista',
+          ),
+        ],
+        animationDuration: const Duration(milliseconds: 1000),
       ),
+      body:
+          [
+            const PriceRiego(),
+            const RegisterRiego(),
+            const ListRiego(),
+          ][currentPageIndex],
     );
   }
 }
+
