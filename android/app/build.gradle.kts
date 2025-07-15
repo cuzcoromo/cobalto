@@ -8,6 +8,10 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// 👇 Añade esta línea
+//val flutter: Map<String, String> by project.extra
+
+
 android {
     namespace = "com.example.prueva"
     compileSdk = flutter.compileSdkVersion

@@ -43,6 +43,15 @@ dependencies:
   cloud_firestore: ^5.6.5
   intl: ^0.20.2
   image_picker: ^1.1.2
+  riverpod_annotation: ^2.6.1
+  # uuid: ^4.5.1
+  uuid: ^4.4.0
+  random_name_generator: ^1.5.0
+  another_flushbar: ^1.12.30
+  flutter_secure_storage: ^9.0.0
+  shimmer: ^3.0.0
+  pdf: ^3.11.3
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +63,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  riverpod_generator: ^2.6.5
+  build_runner: ^2.4.15
+  custom_lint: ^0.7.5
+  riverpod_lint: ^2.6.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+
+
 class ReadDataServices extends StateNotifier<Map<String, List<Map<String, dynamic>>>> {
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
@@ -10,7 +12,11 @@ class ReadDataServices extends StateNotifier<Map<String, List<Map<String, dynami
   }
 
   void _listenToCollection(String collectionName) {
-    _fireStore.collection(collectionName).where('isPublished', isEqualTo: true).snapshots().listen((snapshot) {
+    _fireStore
+    .collection(collectionName)
+    .where('isPublished', isEqualTo: true)
+    .snapshots()
+    .listen((snapshot) {
       state = {
         ...state,
         collectionName: snapshot.docs.map((doc) {
@@ -25,6 +31,7 @@ class ReadDataServices extends StateNotifier<Map<String, List<Map<String, dynami
     });
   }
 
+// obtener usuario por cedula
   Map<String, dynamic>? getUserById(String userId) {
     final users = state['users'] ?? [];
 
@@ -55,7 +62,7 @@ class ReadDataServices extends StateNotifier<Map<String, List<Map<String, dynami
   // Filtrar usuarios cuyo 'ci' no sea igual al userId
   final filteredUsers = users.where((user) => user['ci'] != userId).toList();
   // Actualizar el estado con los usuarios filtrados
-  print('Filtered Users: $filteredUsers');
+  // print('Filtered Users: $filteredUsers');
 
   state = {
     ...state,
@@ -74,7 +81,7 @@ class ReadDataServices extends StateNotifier<Map<String, List<Map<String, dynami
         .update({'isPublished': false});
       filterUsersById(userId);
     } catch (e) {
-      throw Exception('Erro al eliminar');
+      throw Exception('Error al eliminar');
     }
   }
 

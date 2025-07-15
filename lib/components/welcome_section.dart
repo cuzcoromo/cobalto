@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class WelcomeSection extends StatelessWidget {
@@ -5,36 +6,52 @@ class WelcomeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const themeColor = Color(0xFF3f744a);
+
     return SizedBox(
       height: 150,
-      // que ocupe todo el ancho de la pantalla
-      width: MediaQuery.of(context).size.width,
-
+      width: double.infinity,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'COBALTO',
-                style: TextStyle(
-                  color: Color(0xFF3f744a),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 24
-
+          // Padding solo al texto (izquierda)
+          Padding(
+            padding: const EdgeInsets.only(left: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(
+                  'COBALTO',
+                  style: TextStyle(
+                    color: themeColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                  ),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  'Login to your account',
+                  style: TextStyle(
+                    color: Colors.grey[400],
+                    fontSize: 14,
+                  ),
                 ),
-              Text(
-                'Login to your account',
-                style: TextStyle(
-                  color: Colors.grey[400],
-                ),
-                )
-            ],
+              ],
+            ),
           ),
-          SizedBox(width: 30,),
-            Image.asset('images/login_favicon.png', height: 80,),
+
+          const Spacer(), // Empuja la imagen completamente a la derecha
+
+          // Imagen sin padding, pegada al borde derecho
+          SizedBox(
+            width: 80,
+            height: 80,
+            child: Image.asset(
+              'images/login_favicon.png',
+              fit: BoxFit.contain,
+            ),
+          ),
         ],
       ),
     );

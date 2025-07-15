@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prueva/components/render_list.dart';
-import 'package:prueva/firebase/read_data.dart';
+// import 'package:prueva/presentation/users/read_data.dart';
+import 'package:prueva/presentation/users/users_providers.dart';
 import 'package:prueva/theme_colors.dart';
 
 class UsersList extends ConsumerStatefulWidget {
@@ -14,7 +15,18 @@ class UsersList extends ConsumerStatefulWidget {
 class _UsersDataList extends ConsumerState<UsersList> {
   @override
   Widget build(BuildContext context) {
-    final users = ref.watch(readDataProvider)['users'] ?? [];
+    // final users = ref.watch(readDataProvider)['users'] ?? [];
+    final usersdata = ref.watch(usersProvider);
+    
+    if (usersdata.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (usersdata.hasError) {
+      return Center(child: Text('Error al cargar data.'),);
+    }
+
+    final users= usersdata.value;
+
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -34,13 +46,20 @@ class _UsersDataList extends ConsumerState<UsersList> {
                 ),
               ),
               // Renderizar la lista de usuarios
-              users.isNotEmpty
+              users!.isNotEmpty
+              // users.isNotEmpty
                   ? RenderList(items: users,)
                   : const Center(child: Text('No data.')),
             ],
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          ref.invalidate(usersProvider);
+        },
+        child: Icon(Icons.refresh ),
+        ),
     );
   }
 }

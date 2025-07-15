@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prueva/presentation/agua_consumo/navigation_providers.dart';
 import 'package:prueva/screens/app/agua/components/list_riego.dart';
 import 'package:prueva/screens/app/agua/components/price_riego.dart';
 import 'package:prueva/screens/app/agua/components/register_riego.dart';
@@ -25,7 +26,7 @@ class _AguaCaudalState extends ConsumerState<AguaCaudal> {
 
   @override
   void initState() {
-    // Inicialización de los controladores si es necesario
+    // Inicialización de los controladores si es estado
     _direccionControler.text = 'Cobalto';
     super.initState();
   }
@@ -46,7 +47,7 @@ class _AguaCaudalState extends ConsumerState<AguaCaudal> {
 
       // Aquí puedes implementar la lógica para almacenar o enviar los datos
       // Por ejemplo, actualizar un provider o enviar los datos a un servicio backend
-      print('Registro de caudal: $caudal, Unidad: $unidad');
+      // print('Registro de caudal: $caudal, Unidad: $unidad');
     }
   }
 
@@ -54,22 +55,24 @@ class _AguaCaudalState extends ConsumerState<AguaCaudal> {
   Widget build(BuildContext context) {
     // Acceso al tema actual para usar sus colores y estilos
     ThemeData localTheme = Theme.of(context);
+    final indexValue = ref.watch(currentTabIndexProvider);
 
     return Scaffold(
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
+          ref.read(currentTabIndexProvider.notifier).setIndex(index);
+          // setState(() {
+          //   currentPageIndex = index;
+          // });
         },
         height: 50,
         indicatorColor: localTheme.colorScheme.background2,
-        selectedIndex: currentPageIndex,
+        selectedIndex: indexValue,
         destinations: const <Widget>[
           NavigationDestination(
             icon: Icon(Icons.price_change),
             // selectedIcon: Icon(Icons.price_change),
-            label: 'Precios',
+            label: 'Precio',
           ),
           NavigationDestination(
             icon: Icon(Icons.water_drop),
@@ -87,7 +90,7 @@ class _AguaCaudalState extends ConsumerState<AguaCaudal> {
             const PriceRiego(),
             const RegisterRiego(),
             const ListRiego(),
-          ][currentPageIndex],
+          ][indexValue],
     );
   }
 }

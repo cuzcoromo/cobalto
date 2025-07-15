@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:prueva/components/error_message.dart';
-import 'package:prueva/firebase/data_services.dart';
-import 'package:prueva/firebase/read_data.dart';
+import 'package:prueva/presentation/data_services.dart';
+import 'package:prueva/presentation/users/read_data.dart';
 import 'package:prueva/screens/app/users/clear_imputs.dart';
 import 'package:prueva/theme_colors.dart';
 import 'package:intl/intl.dart';
@@ -150,6 +150,7 @@ class _UsersRegisterState extends ConsumerState<UsersRegister> {
   @override
   Widget build(BuildContext context) {
     if(widget.userId != null) onUserById();
+    
     return Scaffold(
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20),

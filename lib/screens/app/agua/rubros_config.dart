@@ -1,156 +1,191 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prueva/components/head_content.dart';
+import 'package:prueva/config/helpers/message.dart';
+import 'package:prueva/presentation/providers.dart';
+import 'package:prueva/presentation/rubros/cobros_consumo_providers.dart';
 import 'package:prueva/theme_colors.dart';
 
-class RubrosConfig extends ConsumerStatefulWidget {
-  const RubrosConfig({super.key});
+class RubrosConfig extends ConsumerWidget {
+
+  List<String> opciones = ['Consumo', 'Riego'];
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _RubrosConfigState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ThemeData localTheme = Theme.of(context);
+    ref.watch(cobroSyncControllerProvider);
+    final listActive = ref.watch(todosFilteredListProvider);
+    final price = ref.watch(getPrecioCobroProvider);
+    final currentFilter = ref.watch(todoCurrentFilterProvider);
+    final data = ref.watch(listaCobroProvider);
+    final isBloqued = ref.watch(isBloque);
 
-class _RubrosConfigState extends ConsumerState<RubrosConfig> {
-  bool isChecked = false;
-  List<bool> isCheckedList = List.generate(20, (index) => false);
-  String? opcionSelect;
-  DateTime? dateSelect;
-
-  final List<String> opciones = ['Consumo', 'Riego'];
- 
-  @override
-  void initState() {
-    super.initState();
-    opcionSelect = opciones.first;
-  }
-
-  Future<void> _selectData(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: dateSelect ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-      selectableDayPredicate: (DateTime day) {
-        final  now = DateTime.now();
-        return day.month == now.month || day.isAfter(now); // Disable weekends
-
-      }
-    );
-    if (picked != null && picked != dateSelect) {
-      setState(() {
-        dateSelect = picked;
-      });
+    if (data.isLoading) {
+      return const Center(child: CircularProgressIndicator());
     }
-  }
+    final precio = price.value!;
 
-  
+    if (listActive.isNotEmpty) {
+      ref.watch(isBloquedProvider);
+    } 
 
-  Widget _headConten(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Wrap(
-        children: [
-          DropdownButton<String>(
-            // hint: const Text('Selecciona'),
-            value: opcionSelect,
-            style: const TextStyle(color: Colors.black),
-            underline: Container(
-              color: Colors.transparent,
-            ),
-            items:
-                opciones.map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-            onChanged: (String? value) {
-              setState(() {
-                opcionSelect = value;
-              });
-            },
-          ),
-          SizedBox(width: 10),
-          TextButton(
-            onPressed: () => _selectData(context),
-            style: ButtonStyle(
-              overlayColor: WidgetStateProperty.resolveWith((states) => Colors.transparent),
-              shape: WidgetStateProperty.all(
-                const RoundedRectangleBorder(side: BorderSide.none),
-              ),
-            ),
-            child:  Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  dateSelect != null
-                      ? '${dateSelect!.day}/${dateSelect!.month}/${dateSelect!.year}'
-                      : 'fecha',
-                  style: const TextStyle(
-                    decoration: TextDecoration.none,
-                    color: Colors.black,
-                  ),
-                ),
-                const Icon(Icons.arrow_drop_down, color: Colors.black),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    ThemeData localTheme = Theme.of(context);
     return Scaffold(
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 2.0,
+              horizontal: 16.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text('Cobro de Agua', style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: localTheme.colorScheme.background1,
-                )),
-                SizedBox(child: _headConten(context), ),
+                Text(
+                  'Cobro de Agua',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: localTheme.colorScheme.background1,
+                  ),
+                ),
+                SizedBox(
+                  child: SegmentedButton<FilterType>(
+                    segments: const [
+                      ButtonSegment(value: FilterType.all, icon: Text('Todos')),
+                      ButtonSegment(
+                        value: FilterType.completed,
+                        icon: Text('Pagado'),
+                      ),
+                      ButtonSegment(
+                        value: FilterType.pending,
+                        icon: Text('No pagado'),
+                      ),
+                    ],
+                    selected: <FilterType>{currentFilter},
+                    onSelectionChanged: isBloqued
+                            ? null
+                            : (value) {
+                              ref
+                                  .read(todoCurrentFilterProvider.notifier)
+                                  .setFilter(value.first);
+                            },
+                  ),
+                ),
+                // SizedBox(child: _headConten(context, ref)),
+                SizedBox(
+                  child: HeadContent(title: 'Selecciona consumo a cobrar'),
+                ),
               ],
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: 20,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text('Rubro ${index + 1}'),
-                  subtitle: Text('Descripción del rubro ${index + 1}'),
-                  trailing: Checkbox(
-                    value: isCheckedList[index],
-                    onChanged: (value) {
-                      setState(() {
-                        isCheckedList[index] = value!;
-                      });
-                    },
+            child: Stack(
+              children: [
+                if (listActive.isNotEmpty && isBloqued)
+                  ModalBarrier(
+                    dismissible: false,
+                    color: Colors.grey.withAlpha((0.2 * 255).round()),
                   ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 2.0,
-            ),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: localTheme.colorScheme.background1,
-              ),
-              onPressed: () {
-                // Acción para agregar un nuevo rubro
-              },
-              child: Text('Guardar', style: TextStyle(color: Colors.white)),
+
+                Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: listActive.length,
+                        itemBuilder: (context, index) {
+                          final user = listActive[index];
+                          final precio_id = precio['id'];
+                          return SwitchListTile(
+                            title: Text('${user.nombre} ${user.apellido}'),
+                            subtitle: Text(
+                              'Valor a cobrar: ${precio['precio']}',
+                            ),
+                            value: user.completedAt != null,
+                            onChanged:
+                                isBloqued
+                                    ? null
+                                    : (value) {
+                                      ref
+                                          .read(listActiveProvider.notifier)
+                                          .updateItem(user.id, precio_id);
+                                    },
+                          );
+                        },
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 130),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child:
+                                !!isBloqued
+                                    ? null
+                                    : ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            localTheme.colorScheme.background1,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 24.0,
+                                          vertical: 12.0,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            30,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed:
+                                          isBloqued
+                                              ? null
+                                              : () async {
+                                                try {
+                                                  final mensaje = await ref.read(registerCobroListProvider.future,);
+                                                  if (mensaje != null) {
+                                                    MessageHelper.showError(
+                                                      context,
+                                                      mensaje,
+                                                    );
+                                                    ref
+                                                        .read(isBloque.notifier)
+                                                        .state = false;
+                                                  } else {
+                                                    MessageHelper.showSuccess(
+                                                      context,
+                                                      'Registro exitoso',
+                                                    );
+                                                    ref
+                                                        .read(isBloque.notifier)
+                                                        .state = true;
+                                                  }
+                                                } catch (e) {
+                                                  MessageHelper.showError(
+                                                    context,
+                                                    'Error al registrar',
+                                                  );
+                                                  ref
+                                                      .read(isBloque.notifier)
+                                                      .state = false;
+                                                }
+                                              },
+                                      child: const Text(
+                                        'Guardar',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                
+              ],
             ),
           ),
         ],

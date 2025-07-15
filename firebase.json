@@ -1,1 +1,38 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"cobalto-42adf","appId":"1:58964083565:android:75e66313b9e4b09c715064","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"cobalto-42adf","configurations":{"android":"1:58964083565:android:75e66313b9e4b09c715064","ios":"1:58964083565:ios:c758804b99f14025715064"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "cobalto-42adf",
+          "appId": "1:58964083565:android:75e66313b9e4b09c715064",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "cobalto-42adf",
+          "configurations": {
+            "android": "1:58964083565:android:75e66313b9e4b09c715064",
+            "ios": "1:58964083565:ios:c758804b99f14025715064"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

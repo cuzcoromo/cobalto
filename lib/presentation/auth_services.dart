@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prueva/storage/storage_service.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 // ValueNotifier<AuthServices> authService = ValueNotifier(AuthServices());
 
 // class AuthServices {
@@ -38,9 +40,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // }
 
-
+// part 'auth_services.g.dart';
 enum AuthState{notAuthentication, chaeking, authenticated}
 
+// @Riverpod(keepAlive: true)
 class AuthServices extends StateNotifier<User?> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
@@ -70,6 +73,13 @@ class AuthServices extends StateNotifier<User?> {
             email: emailLowercase,
             password: password
           );
+          // TODO agregado para obtener token y guardar
+          User? user = credential.user;
+          if(user != null){
+            final token = await user.getIdToken();
+            final storageService = StorageService();
+            await storageService.saveToken(token);
+          }
         // }
         return;
     } catch (e) {
@@ -78,13 +88,16 @@ class AuthServices extends StateNotifier<User?> {
   }
 
   // loout
-  Future<void> logout () async {
-    try{
-      await _auth.signOut();
-    }catch(e){
-      throw Exception('Error al cerrar sesion');
-    }
+  Future<void> logout() async {
+  try {
+    await _auth.signOut(); // Cierra sesión en Firebase
+    final storageService = StorageService();
+    await storageService.deleteToken(); // Borra token localmente
+    state = null; // Actualiza Riverpod manualmente por seguridad
+  } catch (e) {
+    throw Exception('Error al cerrar sesión');
   }
+}
 
   Future<void> createAccount({required String email, required String password}) async {
     try {
