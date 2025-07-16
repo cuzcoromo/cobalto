@@ -25,12 +25,12 @@ class HomeOne extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authProvider);
+    final name = user?.email?.split('@').first;
     // final selectedIndexMenu = ref.watch(selectedIndex);
     final selectedIndexMenu = ref.watch(optionNavigationProvider);
 
     List<Widget> pages = [
-      // const Center(child: Text('Administra tus tareas')),
-      AnimatedUnderline(),
+      WelcomePage(),
       UsersRegister(),
       UsersList(),
       AguaConsumo(),
@@ -39,11 +39,13 @@ class HomeOne extends ConsumerWidget {
       Resumen(),
     ];
 
-    void onDrawerItem(int index) async{
+    void onDrawerItem(int index) async {
       // Espera un poco para que se vea la animación
       await Future.delayed(const Duration(milliseconds: 300));
       Navigator.pop(context); // Cierra el drawer después de seleccionar un ítem
-      ref.read(optionNavigationProvider.notifier).setOption(index); // Actualiza el índice seleccionado
+      ref
+          .read(optionNavigationProvider.notifier)
+          .setOption(index); // Actualiza el índice seleccionado
     }
 
     return Scaffold(
@@ -57,26 +59,38 @@ class HomeOne extends ConsumerWidget {
               ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFF3f744a),
+        // backgroundColor: const Color(0xFF3f744a),
+        backgroundColor: const Color(0xFF589966),
         title: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              'Bienvenido a COBALTO',
-              style: TextStyle(fontSize: 20, color: Colors.white),
-            ),
-            const SizedBox(width: 10),
-            Text(
-              '${user?.email}',
-              style: const TextStyle(fontSize: 14, color: Colors.white60),
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'Hola, ',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextSpan(
+                    text: name,
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      decorationThickness: 1.0,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
-            color: Colors.white,
+            color: Colors.red[100],
             onPressed: () async {
               try {
                 await ref.read(authProvider.notifier).logout();
@@ -118,7 +132,7 @@ class MyDrawer extends StatelessWidget {
     final selectedIndex = ref.watch(optionNavigationProvider);
 
     // logica para determinar  que grupo expandir
-    final  isUsuariosExpanded = selectedIndex == 1 || selectedIndex == 2;
+    final isUsuariosExpanded = selectedIndex == 1 || selectedIndex == 2;
     final isAguaExpanded = selectedIndex >= 3 && selectedIndex <= 5;
 
     return Drawer(
@@ -136,7 +150,18 @@ class MyDrawer extends StatelessWidget {
               style: TextStyle(color: Colors.white, fontSize: 18),
             ),
           ),
-          
+
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Inicio'),
+            selected: selectedIndex == 0,
+            selectedTileColor: Colors.grey[350],
+            onTap: () {
+              ref.read(optionNavigationProvider.notifier).setOption(0);
+              onDrawerItem(0);
+            },
+          ),
+
           //todo Usuarios
           ExpansionTile(
             initiallyExpanded: isUsuariosExpanded,
@@ -146,12 +171,12 @@ class MyDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.add),
                 title: const Text('Registar'),
-                selected:  selectedIndex == 1,
+                selected: selectedIndex == 1,
                 selectedTileColor: Colors.grey[350],
                 onTap: () {
                   ref.read(optionNavigationProvider.notifier).setOption(1);
                   onDrawerItem(1);
-                } 
+                },
               ),
               ListTile(
                 leading: const Icon(Icons.list),
@@ -172,45 +197,41 @@ class MyDrawer extends StatelessWidget {
             title: const Text('Agua'),
             children: [
               ListTile(
-                leading: Icon(
-                  Icons.water_damage_outlined,
-                ),
+                leading: Icon(Icons.water_damage_outlined),
                 title: const Text('Consumo'),
                 selected: selectedIndex == 3,
                 selectedTileColor: Colors.grey[350],
-                onTap: (){
+                onTap: () {
                   ref.read(optionNavigationProvider.notifier).setOption(3);
                   onDrawerItem(3);
-                } 
+                },
               ),
               ListTile(
-                leading: Icon(
-                  Icons.water_drop_outlined,
-                ),
+                leading: Icon(Icons.water_drop_outlined),
                 selected: selectedIndex == 4,
                 selectedTileColor: Colors.grey[350],
                 title: const Text('Riego'),
                 onTap: () {
                   ref.read(optionNavigationProvider.notifier).setOption(4);
                   onDrawerItem(4);
-                } 
+                },
               ),
               ListTile(
                 leading: Icon(Icons.monetization_on_outlined),
                 title: const Text('Cobros'),
                 selected: selectedIndex == 5,
                 selectedTileColor: Colors.grey[350],
-                onTap: (){
+                onTap: () {
                   ref.read(optionNavigationProvider.notifier).setOption(5);
                   onDrawerItem(5);
-                }
+                },
               ),
             ],
           ),
           ListTile(
             leading: const Icon(Icons.summarize_outlined),
             title: const Text('Resumen'),
-            selected: selectedIndex ==6,
+            selected: selectedIndex == 6,
             selectedTileColor: Colors.grey[350],
             onTap: () => onDrawerItem(6),
           ),
@@ -220,23 +241,23 @@ class MyDrawer extends StatelessWidget {
             selected: selectedIndex == 7,
             selectedTileColor: Colors.grey[350],
             // onTap: () => onDrawerItem(7),
-            onTap: (){
+            onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => History())
-                );
-            }
+                MaterialPageRoute(builder: (_) => History()),
+              );
+            },
           ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () => onDrawerItem(1),
-          ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('About'),
-            onTap: () => onDrawerItem(2),
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.settings),
+          //   title: const Text('Settings'),
+          //   onTap: () => onDrawerItem(1),
+          // ),
+          // ListTile(
+          //   leading: const Icon(Icons.info),
+          //   title: const Text('About'),
+          //   onTap: () => onDrawerItem(2),
+          // ),
         ],
       ),
     );

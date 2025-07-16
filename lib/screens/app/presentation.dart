@@ -1,131 +1,111 @@
-
-
 import 'package:flutter/material.dart';
 
-class AnimatedUnderline extends StatefulWidget {
-  const AnimatedUnderline({super.key});
-
-  @override
-  State<AnimatedUnderline> createState() => _AnimatedUnderlineState();
-}
-
-class _AnimatedUnderlineState extends State<AnimatedUnderline>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
-
-  static const double lineWidth = 250.0;
-  static const double circleRadius = 6.0;
-
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    )..repeat(reverse: true); // bucle de ida y vuelta
-
-    _animation = Tween<double>(begin:lineWidth  - circleRadius, end: 0.0)
-        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
-
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-
-  }
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Registro de usuario",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF9FAFB), // bg-gray-50
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.spaceBetween, // igual que justify-between
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(
+                    12,
+                  ), // @[480px]:px-4 @[480px]:py-3
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      16,
+                    ), // @[480px]:rounded-xl
+                    child: Container(
+                      height: 320, // min-h-80
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                          image: AssetImage('images/presentation.png'),
+                        ),
+                        color: Color(0xFFF9FAFB),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    'COBALTO',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF101418),
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      height: 1.2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Text(
+                    '"Gestiona tu consumo de agua de manera eficiente y sostenible."',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFF101418),
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      height: 1.4,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Column(
+            //   children: [
+            //     Padding(
+            //       padding: const EdgeInsets.symmetric(
+            //         horizontal: 16,
+            //         vertical: 12,
+            //       ),
+            //       child: SizedBox(
+            //         width: double.infinity,
+            //         child: ElevatedButton(
+            //           style: ElevatedButton.styleFrom(
+            //             foregroundColor: const Color(0xFF101418),
+            //             backgroundColor: const Color(0xFFb2cae5),
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(
+            //                 100,
+            //               ), // rounded-full
+            //             ),
+            //             padding: const EdgeInsets.symmetric(horizontal: 20),
+            //             minimumSize: const Size.fromHeight(48), // h-12
+            //             textStyle: const TextStyle(
+            //               fontWeight: FontWeight.bold,
+            //               fontSize: 16,
+            //               letterSpacing: 0.24,
+            //             ),
+            //           ),
+            //           onPressed: () {},
+            //           child: const Text(
+            //             'Get Started',
+            //             overflow: TextOverflow.ellipsis,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //     const SizedBox(height: 20), // h-5
+            //   ],
+            // ),
+          ],
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: lineWidth,
-          height: 20,
-          child: AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              bool directiopoint = _controller.status == AnimationStatus.forward;
-              return CustomPaint(
-                painter: LineWithTrailPainter(_animation.value, directiopoint),
-              );
-            },
-          ),
-        ),
-      ],
+      ),
     );
   }
-}
-
-class LineWithTrailPainter extends CustomPainter {
-  final double circleX;
-  final bool directiopoint;
-  
-
-  LineWithTrailPainter(this.circleX, this.directiopoint);
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paintLine = Paint()
-      ..color = Colors.grey.shade400
-      // ..color = Colors.white12
-      ..strokeWidth = 0.1;
-
-    final paintTrail = Paint()
-      // ..color = Colors.blueAccent
-      ..color = Color(0xFF3f744a)
-      ..strokeWidth = 2;
-
-    final paintCircle = Paint()
-      // ..color = Colors.blue
-      ..color = Color(0xFF3f744a)
-      ..style = PaintingStyle.fill;
-
-
-    // Línea base
-    // canvas.drawLine(Offset(0, size.height / 2),
-    //     Offset(size.width, size.height / 2), paintLine);
-
-    // Estela (de círculo hacia atrás)
-    if(directiopoint){
-      canvas.drawLine(
-        Offset(circleX + 20, size.height / 2), 
-        Offset(circleX, size.height / 2), 
-        paintTrail
-        );
-    }else{
-    canvas.drawLine(
-      Offset(circleX - 20, size.height / 2),
-      Offset(circleX, size.height / 2),
-      // Offset(size.width, size.height / 2), 
-      paintTrail
-      );
-    }
-
-    // canvas.drawLine(Offset(0, size.height / 2),
-    //     Offset(size.width, size.height / 2), paintTrail);
-
-
-    // Círculo que se mueve
-    canvas.drawCircle(Offset(circleX, size.height / 2), 4, paintCircle);
-  }
-
-  @override
-  
-
-  @override
-  bool shouldRepaint(covariant LineWithTrailPainter oldDelegate) =>
-      oldDelegate.circleX != circleX;
-
-
 }
